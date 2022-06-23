@@ -6,10 +6,12 @@ import MicroFrontend from './microFrontend';
 
 const createreactappHost = 'http://localhost:4000'
 
-const CreateReactApp = () => {
 
-  const history = useHistory()
-
+interface ICreateReactAppProps {
+  history: any
+}
+const CreateReactApp = ({ history }: ICreateReactAppProps) => {
+  console.log('create react app')
   return <MicroFrontend
     history={history}
     host={createreactappHost}
@@ -66,7 +68,7 @@ const App = (props: any) => {
 
       <Switch>
         <Route path="/home" component={Home} />
-        <Route path="/createreactapp" render={() => <CreateReactApp />} />
+        <Route path="/createreactapp" render={CreateReactApp} />
       </Switch>
     </BrowserRouter>
   );

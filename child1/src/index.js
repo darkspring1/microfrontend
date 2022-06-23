@@ -8,7 +8,6 @@ import reportWebVitals from './reportWebVitals';
 window.renderCreatereactapp = (containerId, history) => {
   const root = ReactDOM.createRoot(document.getElementById(containerId));
   root.render(<App history={history}/>);
-  // serviceWorker.unregister();
 };
 
 // unmount micro frontend function
@@ -20,6 +19,7 @@ window.unmountCreatereactapp = containerId => {
 
 // Mount to root if it is not a micro frontend
 if (!document.getElementById('Createreactapp-container')) {
+  debugger
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(<React.StrictMode><App /></React.StrictMode>);
 }
