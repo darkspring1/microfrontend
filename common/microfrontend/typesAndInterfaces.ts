@@ -1,5 +1,6 @@
 
 export interface IMicroFrontend {
+    isRendered: boolean
     render: (containerId: string, history: any) => void
     unmount: () => void
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface IProps {
   name: string
@@ -8,49 +8,61 @@ interface IProps {
 
 const MicroFrontend = ({ name, host, history }: IProps) => {
 
+  const loading = useRef(Promise.resolve())
   // useEffect call twice with <React.StrictMode>
   useEffect(() => {
     const scriptId = `micro-frontend-script-${name}`;
     
     const renderMicroFrontend = () => {
-      window.microFrontends[name].render(`${name}-container`, history)
+      const mf = window.microFrontends[name]
+      if(!mf.isRendered) {
+        mf.render(`${name}-container`, history)
+      }
     };
 
-    if (document.getElementById(scriptId)) {
+    const loadMicroFrontend = async () => {
+
+      await loading.current
+      if (document.getElementById(scriptId)) {
+        renderMicroFrontend();
+        return;
+      }
+  
+      const manifestJson = await fetch(`${host}/asset-manifest.json`)
+      const manifest = await manifestJson.json()
+
+      const promises = Object.keys(manifest['files'])
+        .filter(key => key.endsWith('.js'))
+        .reduce((sum: Promise<void>[], key) => {
+          sum.push(
+            new Promise(resolve => {
+              const path = `${host}${manifest['files'][key]}`;
+              const script = document.createElement('script');
+              if (key === 'main.js') {
+                script.id = scriptId;
+              }
+              script.onload = () => {
+                resolve();
+              };
+              script.src = path;
+              document.head.appendChild(script);
+            })
+          );
+          return sum;
+        }, []);
+
+      await Promise.allSettled(promises)
       renderMicroFrontend();
-      return;
     }
 
-    fetch(`${host}/asset-manifest.json`)
-      .then(res => res.json())
-      .then(manifest => {
-        const promises = Object.keys(manifest['files'])
-          .filter(key => key.endsWith('.js'))
-          .reduce((sum: Promise<void>[], key) => {
-            sum.push(
-              new Promise(resolve => {
-                const path = `${host}${manifest['files'][key]}`;
-                const script = document.createElement('script');
-                if (key === 'main.js') {
-                  script.id = scriptId;
-                }
-                script.onload = () => {
-                  resolve();
-                };
-                script.src = path;
-                document.head.appendChild(script);
-              })
-            );
-            return sum;
-          }, [name, host, history]);
-        Promise.allSettled(promises).then(() => {
-          renderMicroFrontend();
-        });
-      });
+    loading.current = loadMicroFrontend()
 
     return () => {
-      if(window.microFrontends && window.microFrontends[name]) {
-        window.microFrontends[name].unmount()
+      if(window.microFrontends) {
+        const mf = window.microFrontends[name]
+        if(mf && mf.isRendered) {
+          mf.unmount()
+        }
       }
     };
   }, [name, history, host]);
