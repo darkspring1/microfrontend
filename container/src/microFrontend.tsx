@@ -8,22 +8,18 @@ interface IProps {
 
 const MicroFrontend = ({ name, host, history }: IProps) => {
 
-  //useEffect call twice with <React.StrictMode>
+  // useEffect call twice with <React.StrictMode>
   useEffect(() => {
     const scriptId = `micro-frontend-script-${name}`;
     
     const renderMicroFrontend = () => {
-      const w: any = window
-      w[`render${name}`] &&
-        w[`render${name}`](`${name}-container`, history);
+      window.microFrontends[name].render(`${name}-container`, history)
     };
 
     if (document.getElementById(scriptId)) {
       renderMicroFrontend();
       return;
     }
-
-    console.log(`effect. ${name} ${host}`)
 
     fetch(`${host}/asset-manifest.json`)
       .then(res => res.json())
@@ -53,11 +49,11 @@ const MicroFrontend = ({ name, host, history }: IProps) => {
       });
 
     return () => {
-      console.log('unmount')
-      const w: any = window
-      w[`unmount${name}`] && w[`unmount${name}`](`${name}-container`);
+      if(window.microFrontends && window.microFrontends[name]) {
+        window.microFrontends[name].unmount()
+      }
     };
-  }, []);
+  }, [name, history, host]);
 
   return <main id={`${name}-container`} />;
 };

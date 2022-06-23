@@ -6,34 +6,32 @@ import reportWebVitals from './reportWebVitals';
 
 
 
-const extendWindow = () => {
-  const w: any = window
+// const extendWindow = () => {
+//   const w: any = window
 
-  w.roots = {}
-  w.renderBrowse = (containerId: string, history: any) => {
-    const mfRoot = createRoot(document.getElementById(containerId)!)
-    mfRoot.render(<App history={history} />);
-    w.roots[containerId] = mfRoot
-    // unregister();
-  };
+//   w.roots = {}
+//   w.renderBrowse = (containerId: string, history: any) => {
+//     const mfRoot = createRoot(document.getElementById(containerId)!)
+//     mfRoot.render(<App history={history} />);
+//     w.roots[containerId] = mfRoot
+//     // unregister();
+//   };
   
-  w.unmountBrowse = (containerId: string) => {
-    if(w.roots[containerId]) {
-      const mfRoot: Root = w.roots[containerId]
-      mfRoot.unmount()
-    }
-  };
-}
+//   w.unmountBrowse = (containerId: string) => {
+//     if(w.roots[containerId]) {
+//       const mfRoot: Root = w.roots[containerId]
+//       mfRoot.unmount()
+//     }
+//   };
+// }
 
-extendWindow()
+// extendWindow()
 
 const root = createRoot(document.getElementById('root')!)
 root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
-  ,
-);
+  </React.StrictMode>);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

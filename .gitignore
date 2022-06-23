@@ -32,4 +32,4 @@ yarn-error.log*
 /src/contracts/generated
 /package-lock.json
 
-child2/src/common/microfrontend
+*/src/common/microfrontend

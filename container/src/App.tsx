@@ -11,11 +11,10 @@ interface ICreateReactAppProps {
   history: any
 }
 const CreateReactApp = ({ history }: ICreateReactAppProps) => {
-  console.log('create react app')
   return <MicroFrontend
     history={history}
     host={createreactappHost}
-    name="Createreactapp"
+    name="createreactapp"
   />
 }
 
