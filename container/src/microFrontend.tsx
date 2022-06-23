@@ -18,6 +18,7 @@ class MicroFrontend extends React.Component<IProps> {
       return;
     }
 
+    const self = this
     fetch(`${host}/asset-manifest.json`)
       .then(res => res.json())
       .then(manifest => {
@@ -25,7 +26,9 @@ class MicroFrontend extends React.Component<IProps> {
         script.id = scriptId;
         script.crossOrigin = '';
         script.src = `${host}${manifest['files']['main.js']}`;
-        script.onload = this.renderMicroFrontend;
+        script.onload = () => {
+          this.renderMicroFrontend.call(self)
+        }
         document.head.appendChild(script);
       });
   }
@@ -39,7 +42,10 @@ class MicroFrontend extends React.Component<IProps> {
   renderMicroFrontend() {
     const { name, history } = this.props
     const w: any = window
-    w[`render${name}`] && w[`render${name}`](`${name}-container`, history);
+
+    if(w[`render${name}`]) {
+      w[`render${name}`](`${name}-container`, history);
+    }
   }
 
   render() {

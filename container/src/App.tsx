@@ -13,7 +13,7 @@ const CreateReactApp = () => {
   return <MicroFrontend
     history={history}
     host={createreactappHost}
-    name="createreactapp"
+    name="Createreactapp"
   />
 }
 
